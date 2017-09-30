@@ -1,0 +1,53 @@
+package hydrograph.engine.transformation.userfunctions.aggregate;
+
+import java.math.BigInteger;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.DoubleStream;
+import java.util.stream.IntStream;
+
+public class Sample {
+
+    public static void main(String args[])
+    {
+        Object[] obj={1000,20,30};
+        /*Integer[] obj2={10,20,30};
+         if(obj[0] instanceof Integer)
+                       System.out.println(Arrays.stream(obj).mapToInt(o -> (Integer) o).max());
+
+        int[] t=Arrays.stream(obj).mapToInt(o -> (Integer) o).toArray();
+        int sum1=Arrays.stream(obj).mapToInt(o -> (Integer) o).reduce(0, (x, y) -> x + y);
+        int min1=Arrays.stream(obj).mapToInt(o -> (Integer) o).max().getAsInt();
+        Integer count1=(int)Arrays.stream(obj).mapToInt(o -> (Integer) o).count();
+        System.out.println("min"+min1+" "+count1);
+        IntStream.of(t).sum();
+        int[] numbers = {1, 24, 45, 62, 85, 8, 91, 3, 5, 56, 9};
+        Integer total = IntStream.of(numbers).sum();
+        Integer count = (int)IntStream.of(numbers).count();
+        Integer max = Arrays.stream(numbers).max().getAsInt();
+        Integer min = Arrays.stream(numbers).min().getAsInt();
+
+        List<String> list = Arrays.asList("java", "python", "nodejs", "ruby");
+        String[] str={"java", "python", "nodejs", "ruby"};
+        //java, python, nodejs, ruby
+        String result = String.join(",", str);
+        System.out.println(result);
+
+        int[][] data = {
+                { 1, 2, 0 },
+                { 4, 5, 6 }
+        };
+
+        int sums = Arrays.stream(data)
+                .mapToInt(arr -> arr[0])
+                .sum();
+       int sums1= Arrays.stream(data).mapToInt(a -> a[0]).sum();
+        System.out.println(sums1);*/
+
+        String[] str=Arrays.stream(obj).map(Object::toString).
+                toArray(String[]::new);
+        String result = String.join(",", str);
+        System.out.println(result);
+    }
+
+}
