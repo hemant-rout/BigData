@@ -49,5 +49,28 @@ public class Sample {
         String result = String.join(",", str);
         System.out.println(result);
     }
+    
+    
+    
+    
+    
+    
+    
+     Integer sum = Arrays.stream(obj).flatMapToInt(arr -> Arrays.stream(arr)).sum();
+        Long count = Arrays.stream(obj).flatMapToInt(arr -> Arrays.stream(arr)).count();
+        Integer max = Arrays.stream(obj).flatMapToInt(arr -> Arrays.stream(arr)).max().getAsInt();
+        Integer min = Arrays.stream(obj).flatMapToInt(arr -> Arrays.stream(arr)).min().getAsInt();
+        System.out.println("sum "+sum);
+        System.out.println("count "+count);
+        System.out.println("max   "+max);
+        System.out.println("min   "+min);
+
+
+
+        Integer[][] data = new Integer[][]{{1000,20,30},{1000,20,30},{1000,20,30},{1000,20,30}};
+        Stream<Integer[]> temp = Arrays.stream(data);
+        Stream<Integer> stringStream = temp.flatMap(x -> Arrays.stream(x));
+        System.out.println("flat count"+stringStream.count());
+        stringStream.flatMapToInt(o -> (Integer) o).count();
 
 }
