@@ -46,3 +46,7 @@ def decimalStrip(inputValue: String, decimal_point: String): String = {
     }
     returnString
   }
+
+
+
+https://alvinalexander.com/scala/how-find-difference-intersection-distinct-characters-in-string
