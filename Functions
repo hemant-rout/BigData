@@ -48,5 +48,9 @@ def decimalStrip(inputValue: String, decimal_point: String): String = {
   }
 
 
+def stringLeftTrim(inputValue: String): String = {
+    if (inputValue == null) return null
+    inputValue.replaceFirst("\\s+", "")
+  }
 
 https://alvinalexander.com/scala/how-find-difference-intersection-distinct-characters-in-string
