@@ -1,0 +1,13 @@
+def decimalStrip(inputValue: String, decimal_point: String): String = {
+    if (inputValue == null) return null
+    val filter = inputValue.replaceAll("[^0-9-\\" + decimal_point + "]", "")
+
+    if (!(filter == "")) {
+      val regx = "^(-)(0+)(.*)|^(0+)(.*)"
+      val `match` = Pattern.compile(regx).matcher(filter)
+      if (`match`.find) if (`match`.group(1) != null) return `match`.group(1) + `match`.group(3)
+      else return `match`.group(5)
+      return filter
+    }
+    "0"
+  }
