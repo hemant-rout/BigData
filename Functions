@@ -12,3 +12,37 @@ def decimalStrip(inputValue: String, decimal_point: String): String = {
     }
     "0"
   }
+
+
+ def stringFilter(inputValue: String, searchString: String): String = {
+    if (inputValue == null) return null
+    val inputChars = inputValue.toCharArray
+    val searchStringChars = searchString.toCharArray
+    val returnset = new util.LinkedList[Character]
+    var i = 0
+    while (i < inputChars.length) {
+      {
+        var j = 0
+        while (j < searchStringChars.length) {
+          {
+            if (inputChars(i) == searchStringChars(j)) {
+              returnset.add(inputChars(i))
+              break //todo: break is not supported
+            }
+          }
+          {
+            j += 1; j - 1
+          }
+        }
+      }
+      {
+        i += 1; i - 1
+      }
+    }
+    var returnString = ""
+    import scala.collection.JavaConversions._
+    for (c <- returnset) {
+      returnString += c
+    }
+    returnString
+  }
