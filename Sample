@@ -74,3 +74,18 @@ public class Sample {
         stringStream.flatMapToInt(o -> (Integer) o).count();
 
 }
+
+
+
+
+
+
+ val schema=StructType(List(StructField("f1", StringType, nullable = true), StructField("f2", StringType, nullable = true), StructField("f3", StringType, nullable = true), StructField("f4", StringType, nullable = true), StructField("f5", StringType, nullable = true)))
+
+    var listf:ListBuffer[StructField]=ListBuffer[StructField]()
+
+    schema.toList.foreach(f=>{
+     if(f.name!="f1")
+        listf+=StructField(f.name,f.dataType,f.nullable)})
+
+   val newS:StructType=StructType(listf)
