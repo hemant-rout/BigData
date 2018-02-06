@@ -1,0 +1,4 @@
+import spark.implicits._
+    val df = Seq(("A100", 500), ("B100", 200), ("A100", 500), ("B100", 600),("A100", 1000)).toDF("accountNumber", "assetValue")
+
+    df.withColumn("rank", row_number() over(Window.partitionBy($"accountNumber").orderBy($"assetValue".desc))).show
