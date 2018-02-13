@@ -89,3 +89,9 @@ public class Sample {
         listf+=StructField(f.name,f.dataType,f.nullable)})
 
    val newS:StructType=StructType(listf)
+
+
+
+
+
+df.write.option("quote","\u0000").option("sep",":")
