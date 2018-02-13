@@ -95,3 +95,4 @@ public class Sample {
 
 
 df.write.option("quote","\u0000").option("sep",":")
+https://stackoverflow.com/questions/44395363/how-to-include-double-quotes-in-spark-sql-concat
