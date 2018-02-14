@@ -1,0 +1,77 @@
+1Çabc xys "MH,Pune" as "6th" afÇasÇsa
+6Çabc xys "MHÇPune"ÇasÇsa
+3Ç"MH|Pune"ÇasÇsa
+2Çabc xys "MH,Pune" as "6th" afÇasÇsa
+4Ç"MH|Pune" faÇasÇsa
+10Ç"MHÇPune" faÇasÇsa
+4Ç"7th" testÇasÇsa
+5Çabc xys "MH|Pune"ÇasÇsa
+7Ç"7th"ÇasÇsa
+15ÇMH|PuneÇasÇsa
+
+val df=spark.read.option("sep","Ç").csv("")
+
+case-1:
+df.write.option("sep",":").mode(SaveMode.Overwrite).csv("")
+
+df.write.option("sep",":").mode(SaveMode.Overwrite).csv("")
+
+1:"abc xys \"MH,Pune\" as \"6th\" af":as:sa
+6:"abc xys \"MH":"Pune\"":as
+3:MH|Pune:as:sa
+2:"abc xys \"MH,Pune\" as \"6th\" af":as:sa
+4:"\"MH|Pune\" fa":as:sa
+10:"\"MHÇPune\" fa":as:sa
+4:"\"7th\" test":as:sa
+5:"abc xys \"MH|Pune\"":as:sa
+7:7th:as:sa
+15:MH|Pune:as:sa
+
+
+
+case-2:
+
+df.write.option("quote","\u0000").option("sep",":").mode(SaveMode.Overwrite).csv("")
+
+1:abc xys "MH,Pune" as "6th" af:as:sa
+6:abc xys "MH:Pune":as
+3:MH|Pune:as:sa
+2:abc xys "MH,Pune" as "6th" af:as:sa
+4:"MH|Pune" fa:as:sa
+10:"MHÇPune" fa:as:sa
+4:"7th" test:as:sa
+5:abc xys "MH|Pune":as:sa
+7:7th:as:sa
+
+case-3:
+df.write.option("sep",":").option("escapeQuotes","false").mode(SaveMode.Overwrite).csv()
+
+1:abc xys "MH,Pune" as "6th" af:as:sa
+6:abc xys "MH:Pune":as
+3:MH|Pune:as:sa
+2:abc xys "MH,Pune" as "6th" af:as:sa
+4:"\"MH|Pune\" fa":as:sa
+10:"\"MHÇPune\" fa":as:sa
+4:"\"7th\" test":as:sa
+5:abc xys "MH|Pune":as:sa
+7:7th:as:sa
+15:MH|Pune:as:sa
+
+case-4:
+
+ df.write.option("quote","\u0000").option("sep",":").option("escapeQuotes","false").mode(SaveMode.Overwrite).csv("")
+
+1:abc xys "MH,Pune" as "6th" af:as:sa
+6:abc xys "MH:Pune":as
+3:MH|Pune:as:sa
+2:abc xys "MH,Pune" as "6th" af:as:sa
+4:"MH|Pune" fa:as:sa
+10:"MHÇPune" fa:as:sa
+4:"7th" test:as:sa
+5:abc xys "MH|Pune":as:sa
+7:7th:as:sa
+15:MH|Pune:as:sa
+
+
+
+15:""MH|Pune"":as:sa
