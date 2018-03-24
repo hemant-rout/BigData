@@ -94,6 +94,53 @@ public class Sample {
 
 
 
+
+
+
+
+
+
+
+
+
+
+Driver:
+spark.dynamicAllocation.enabled=true
+spark.dynamicAllocation.executorIdleTimeout=2m
+spark.dynamicAllocation.minExecutors=2
+spark.dynamicAllocation.maxExecutors=2000
+
+Spark-18838 fixed in Spark-2.3
+
+Better Fetech Failure Handling -19753
+spark.max.fetch.failures.per.stage=10 -Inprogress
+
+Tune RPC Server threads
+spark.rpc.io.serverThreads=64 default 8
+
+
+Execuotr memory layout:
+
+Tuning memory conf:
+spark.memory.offHeap.enabled=true
+spark.memory.offHeap.size=3g
+
+spark.executor.memory=3g
+
+spark.yarn.executor.memoryOverhead=0.1*(6g)
+spark.executor.extraJavaOptions = -XX:ParallelGCThread=4 -XX:+UseParalleGC
+
+
+Eliminating disk I/O
+
+spark.shuffle.file.buffer=1 MB
+spark.unsafe.sorter.spill.reader.buffer.size=1MB
+
+
+
+
+
+
 df.write.option("quote","\u0000").option("sep",":")
 https://stackoverflow.com/questions/44395363/how-to-include-double-quotes-in-spark-sql-concat
 
