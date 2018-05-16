@@ -80,3 +80,4 @@ https://cwiki.apache.org/confluence/display/Hive/Hive+on+Spark%3A+Getting+Starte
 https://stackoverflow.com/questions/33193958/change-nullable-property-of-column-in-spark-dataframe
 https://blog.cloudera.com/blog/2017/02/working-with-udfs-in-apache-spark/
 https://community.hortonworks.com/articles/768/using-hive-udfudafudtf-with-sparksql.html
+http://site.clairvoyantsoft.com/understanding-resource-allocation-configurations-spark-application/
