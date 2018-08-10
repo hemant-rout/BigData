@@ -1,0 +1,120 @@
+Mandar Vaidya10:39 AM
+Spark configuration:
+
+Spark-submit:
+Executor memory:8GB
+Driver Memory:8 GB
+Number of executor:3
+Executor core :8 Cores
+---------------------------
+Total memory spark will for storage and execution?
+Mandar Vaidya10:44 AM
+remove all duplicate record from dataframe:
+---------------------
+Country State  Gender  %of people
+India	Pune   male       40
+India	Pune   Female      50
+India	Mumbai   male       50
+India	Mumbai   female    67
+USA		Newyork   male     23
+USA     newyork   female    67
+USA		Newyork   male     23
+USA     newyork   female    67
+India	Pune   male       40
+
+
+Duplicate Record:
+USA		Newyork   male     23
+USA     newyork   female    67
+India	Pune   male       40
+
+Result record:
+India	Pune   male       
+
+Result record:
+India	Pune   male       40
+India	Pune   Female      50
+India	Mumbai   male       50
+India	Mumbai   female    67
+USA		Newyork   male     23
+USA     newyork   female    67
+df
+You10:47 AM
+val resdf=df.distinct()
+Mandar Vaidya10:49 AM
+Table:
+Country State  Gender  %of people
+India	Pune   male       40
+India	Pune   Female      50
+India	Mumbai   male       50
+India	Mumbai   female    67
+USA		Newyork   male     23
+USA     newyork   female    67
+
+Result : 
+
+Country  state male   female
+India    Pune  40      50
+India    Mumbai  50      67
+USA      Newyork  23     67
+You10:50 AM
+df.groupby().pivot(seq()).agg().show
+You10:52 AM
+df.groupby(col("country")).pivot(col("gender")).agg(sum("people")).show
+You10:56 AM
+df.groupby(col("state")).pivot(col("gender")).agg(sum("people")).show
+Mandar Vaidya10:58 AM
+Table:
+C1
+1-Jan-2017
+5-Jan-2017
+10-Jan-2017
+15-Jan-2017
+20-Jan-2017
+25-Jan-2017
+
+Output:
+
+4(5-Jan-2017  - 1-Jan-2017)
+5(10-Jan-2017 - 5-Jan-2017)
+5(15-Jan-2017 - 10-Jan-2017)
+5(20-Jan-2017 - 15-Jan-2017)
+5(25-Jan-2017 - 20-Jan-2017)
+0(0 - 25-Jan-2017)
+
+Difference between two consecutive record in terms of day.
+
+Write hive query for generating above result
+Mandar Vaidya11:04 AM
+3 Nodes
+Each Node : 8GB RAM and 8 Cores
+			
+HDFS data: 30GB
+created Hive table :  employee
+hive query engine : taz
+
+hive>select count(*) from ( select distinct(C1) from employee)t1;
+
+
+what will happen to query?
+failed -->how much additional memory i required to run the job
+success -->how memory allocation happen to hive job
+Mandar Vaidya11:13 AM
+List<Integer> list1 = new ArrayList<Integer>
+list1.add(10)
+list1.add(20)
+list1.add(30)
+list1.add(40)
+
+Iterator<Integer> it = list1.iterator()
+while(it.hasNext())
+{
+
+list1.add(60);
+System.out.println(" Result : " + it.next())
+}
+
+
+Above code fail or success 
+if fail --->what is reason
+if success -->what is output
