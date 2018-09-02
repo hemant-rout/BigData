@@ -1,0 +1,11 @@
+leetcode.com/problemset/all
+
+codechef.com
+
+"cracking the coding interview 6th edition" by gayle lackmann mcdowell
+geeksforgeeks.com
+hackerrank.com
+code.org
+https://www.w3resource.com/python-exercises/
+Elements of Programming interviews in Python: The Insider's Guide
+byte of python by swaroop
