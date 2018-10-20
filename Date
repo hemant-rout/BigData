@@ -610,3 +610,11 @@ import java.text.DateFormat
       java.sql.Date.valueOf(localDate)
     }
   }
+
+
+ val str="^(1[0-2]|0[1-9])/(3[01]|[12][0-9]|0[1-9])/[0-9]{4}$"
+    val dt="10/12/2016"
+    //println(str.findFirstIn(dt))
+    val sd=new SimpleDateFormat("dd/MM/yyyy")
+    println(Try(sd.parse(dt)).isSuccess)
+    println(dt.matches(str))
