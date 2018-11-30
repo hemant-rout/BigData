@@ -118,3 +118,4 @@ https://github.com/GoogleCloudPlatform/cloud-bigtable-examples/tree/master/scala
 https://github.com/hortonworks-spark/shc
 https://github.com/alexandru/scala-best-practices
 http://blog.jaceklaskowski.pl/spark-workshop/slides/00_agenda-5-days-Apache-Spark-Advanced-for-Developers.html#/home
+https://stackoverflow.com/questions/28454080/how-to-log-using-log4j-to-local-file-system-inside-a-spark-application-that-runs
