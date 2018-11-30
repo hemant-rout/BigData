@@ -122,3 +122,4 @@ https://stackoverflow.com/questions/28454080/how-to-log-using-log4j-to-local-fil
 https://stackoverflow.com/questions/42230235/spark-submit-how-to-specify-log4j-properties/42254437
 https://community.cloudera.com/t5/Advanced-Analytics-Apache-Spark/Config-log4j-in-Spark/td-p/34968
 https://community.hortonworks.com/questions/85197/how-to-override-default-log4j-properties-in-yarn-c.html
+https://mapr.com/support/s/article/Spark-Troubleshooting-guide-Debugging-Spark-Applications-How-to-pass-log4j-properties-from-executor-and-driver?language=en_US
