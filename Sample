@@ -162,4 +162,26 @@ println(x.split("=")(0)+"\t")
 
 
 
-Years.yearsBetween(sdate, edate).getYears
+ val cr=CassandraRow.fromMap(Map("puid"->"p1","vuid"->"v1","e1"->1,"e2"->null,"e3"->1,"sdate"->"2016-01-02 00:00:00.000","edate"->"2016-01-02 02:35:00.000"))
+
+    val sdate=cr.getDateTime("sdate")
+    val edate=cr.getDateTime("edate")
+    //println(Hours.hoursBetween(sdate, edate).getHours)
+    println("Start"+DateTime.now())
+    (1 to 20000000).foreach(r=>
+      Years.yearsBetween(sdate, edate).getYears
+    )
+    println("End"+DateTime.now())
+
+    println("Start"+DateTime.now())
+    (1 to 20000000).foreach(r=>
+      //Hours.hoursBetween(sdate, edate).getHours
+      LocalDate.of(cr.getDateTime("sdate").getYear,cr.getDateTime("sdate").getMonthOfYear,cr.getDateTime("sdate").getDayOfYear)
+    )
+    println("End"+DateTime.now())
+    
+    
+    Start2018-12-19T00:59:48.239+05:30
+End2018-12-19T00:59:50.253+05:30
+Start2018-12-19T00:59:50.253+05:30
+End2018-12-19T01:01:39.969+05:30
