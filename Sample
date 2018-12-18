@@ -158,3 +158,8 @@ var mp:Map[String,String]=Map[String,String]()
       //mp(x.split("=")(0)->x.split("=")(1))
 println(x.split("=")(0)+"\t")
     })
+
+
+
+
+Years.yearsBetween(sdate, edate).getYears
