@@ -90,3 +90,17 @@ https://alvinalexander.com/scala/how-find-difference-intersection-distinct-chara
 
     WeekDay.values filter isWorkingDay foreach println
   }
+
+
+    object WeekDay extends Enumeration {
+      type WeekDay = Value
+      val Sat=Value("Sat")
+      val Fri=Value("ge")
+      val Sun=Value("Sun")
+      //val Mon, Tue, Wed, Thu, Fri, Sat, Sun = Val
+    }
+    import WeekDay._
+    isWorkingDay(WeekDay.Sun)
+    def isWorkingDay(d: WeekDay.Value): Unit ={
+      println(d)
+    }
