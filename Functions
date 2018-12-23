@@ -74,3 +74,19 @@ https://alvinalexander.com/scala/how-find-difference-intersection-distinct-chara
     }).map(r=>(r.getString("puid"),r.getDate("edate"))).collect()
   rdd1.filter(r=> countList.exists(x=>x._1.equalsIgnoreCase(r.getString("puid")) && (r.getDate("edate").after(x._2) ||r.getDate("edate").equals(x._2)))).foreach(println)
   }
+
+
+
+
+ object Main extends App {
+
+    object WeekDay extends Enumeration {
+      type WeekDay = Value
+      val Mon, Tue, Wed, Thu, Fri, Sat, Sun = Value
+    }
+    import WeekDay._
+
+    def isWorkingDay(d: WeekDay) = ! (d == Sat || d == Sun)
+
+    WeekDay.values filter isWorkingDay foreach println
+  }
