@@ -1,0 +1,44 @@
+package com.data.spark
+
+import com.datastax.spark.connector.CassandraRow
+import org.apache.spark.broadcast.Broadcast
+import org.apache.spark.rdd.RDD
+import org.apache.spark.sql.SparkSession
+
+
+object CassandraExample {
+
+  def main(args: Array[String]): Unit = {
+    val spark = SparkSession.builder().appName("sparkTest").config("spark.tmp.warehouse", "file:///tmp").master("yarn").getOrCreate()
+
+    val currentRDD: RDD[CassandraRow] = spark.sparkContext.parallelize(Seq(
+      CassandraRow.fromMap(Map("puid" -> "p1", "vuid" -> "v1", "e" -> 1, "e_date" -> "2015-01-02 00:00:00.000"))
+    ))
+
+    val patientHistoryList= spark.sparkContext.parallelize(Seq(
+      CassandraRow.fromMap(Map("puid" -> "p1", "element"->"e", "element_date" -> "2016-01-02 00:00:00.000","elementvalue"->2)),
+      CassandraRow.fromMap(Map("puid" -> "p1", "element"->"e", "element_date" -> "2014-01-02 00:00:00.000","elementvalue"->10)),
+      CassandraRow.fromMap(Map("puid" -> "p1", "element"->"e", "element_date" -> "2017-01-02 00:00:00.000","elementvalue"->10)),
+        CassandraRow.fromMap(Map("puid" -> "p2", "element"->"e", "element_date" -> "2014-01-02 00:00:00.000","elementvalue"->10))
+    )).collect().toList.sortWith((x,y)=>x.getDateTime("element_date").isAfter(y.getDateTime("element_date")))
+
+
+    val bl=spark.sparkContext.broadcast(patientHistoryList)
+
+    currentRDD.filter(r=>mostRecent(r,bl))
+
+  }
+
+
+  def mostRecent(visit:CassandraRow,patientHistory:Broadcast[List[CassandraRow]]): Boolean ={
+
+    patientHistory.value.foreach(r=>println("Cassandra1 : "+r))
+    val list=patientHistory.value.filter(r=>{
+    r.getString("puid").equalsIgnoreCase(visit.getString("puid")) &&
+      r.getString("element").equalsIgnoreCase("e") &&
+      r.getDateTime("element_date").isAfter(visit.getDateTime("e_date"))
+    })
+    list.foreach(r=>println("Result ::=====>"+r.getString("puid")+" "+r.getDouble("elementvalue")))
+    true
+  }
+}
