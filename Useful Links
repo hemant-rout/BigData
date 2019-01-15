@@ -141,3 +141,4 @@ https://github.com/GoogleCloudPlatform/java-docs-samples/blob/master/logging/clo
 https://cloud.google.com/logging/docs/api/tasks/creating-logs#logging-delete-log-java
 https://github.com/hortonworks-spark/shc/blob/master/core/src/test/scala/org/apache/spark/sql/DataTypeSuite.scala
 https://umbertogriffo.gitbooks.io/apache-spark-best-practices-and-tuning/content/tuning-java-garbage-collection.html
+https://www.indix.com/blog/engineering/lessons-from-using-spark-to-process-large-amounts-of-data-part-i/
