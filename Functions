@@ -138,3 +138,4 @@ https://alvinalexander.com/scala/how-find-difference-intersection-distinct-chara
     val cond="col3 in ("+fieldValue.map(x=>s"'$x'").mkString(",")+")"
     println(cond)
     df.where(cond).show()
+df.where(cond +" or "+"col4 in ('d3')").show()
