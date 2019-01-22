@@ -128,3 +128,13 @@ https://alvinalexander.com/scala/how-find-difference-intersection-distinct-chara
     val fieldValue=Array("12f-puhrns-343522","12f-puhrns-343556")
 
     df.where(df.col("col3").isin(fieldValue:_*)).show()
+
+
+ val fieldValue=Array("12f-puhrns-343522","12f-puhrns-343556")
+
+    //df.where("col3 =='12f-puhrns-343522' or col3 =='12f-puhrns-343556'").show()
+
+    //df.where("col3 in ('12f-puhrns-343522','12f-puhrns-343556')").show()
+    val cond="col3 in ("+fieldValue.map(x=>s"'$x'").mkString(",")+")"
+    println(cond)
+    df.where(cond).show()
