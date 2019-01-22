@@ -104,3 +104,27 @@ https://alvinalexander.com/scala/how-find-difference-intersection-distinct-chara
     def isWorkingDay(d: WeekDay.Value): Unit ={
       println(d)
     }
+
+
+
+    /*val df = spark.createDataFrame(Seq(
+      (0, "a1", "b1", "c1", "d1"),
+      (1, "a2", "b2", "c2", "d2"),
+      (2, "a3", "b3", null, "d3"),
+      (3, null, null, "c4", "d4"),
+      (4, null, "b5", "c5", "d5"),
+      (5, null, "b5", "c5", "d5")
+    )).toDF("id", "col1", "col2", "col3", "col4")*/
+
+    val df = spark.createDataFrame(Seq(
+      (0, "a1", "b1", "12f-puhrns-3435", "d1"),
+      (1, "a2", "b2", "12f-puhrns-343556", "d2"),
+      (2, "a3", "b3", null, "d3"),
+      (3, null, null, "sdfsd-234-6787", "d4"),
+      (4, null, "b5", "12f-puhrns-343522", "d5"),
+      (5, null, "b5", "12f-puhrns-343522", "d5")
+    )).toDF("id", "col1", "col2", "col3", "col4")
+
+    val fieldValue=Array("12f-puhrns-343522","12f-puhrns-343556")
+
+    df.where(df.col("col3").isin(fieldValue:_*)).show()
