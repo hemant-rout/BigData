@@ -1,0 +1,69 @@
+package com.data.spark
+
+import com.datastax.spark.connector.CassandraRow
+import org.apache.spark.broadcast.Broadcast
+import org.apache.spark.rdd.RDD
+import org.apache.spark.sql.SparkSession
+
+
+object CassandraExample {
+
+ lazy val array=Array("0","0","0","0")
+  def main(args: Array[String]): Unit = {
+    val spark = SparkSession.builder().appName("sparkTest").config("spark.tmp.warehouse", "file:///tmp").master("local").getOrCreate()
+
+    /*val currentRDD: RDD[CassandraRow] = spark.sparkContext.parallelize(Seq(
+      CassandraRow.fromMap(Map("puid" -> "p1", "vuid" -> "v1", "e" -> 1, "e_date" -> "2015-01-02 00:00:00.000"))
+    ))*/
+
+    /*val patientHistoryList= spark.sparkContext.parallelize(Seq(
+      CassandraRow.fromMap(Map("puid" -> "p1", "element"->"e", "element_date" -> "2016-01-02 00:00:00.000","elementvalue"->2)),
+      CassandraRow.fromMap(Map("puid" -> "p1", "element"->null, "element_date" -> "2014-01-02 00:00:00.000","elementvalue"->10)),
+      CassandraRow.fromMap(Map("puid" -> "p1", "element"->"e", "element_date" -> null,"elementvalue"->10)),
+        CassandraRow.fromMap(Map("puid" -> "p2", "element"->"e", "element_date" -> "2014-01-02 00:00:00.000","elementvalue"->null))
+    )).collect().toList.sortWith((x,y)=>x.getDateTime("element_date").isAfter(y.getDateTime("element_date")))*/
+
+
+    /*val bl=spark.sparkContext.broadcast(patientHistoryList)
+
+    currentRDD.filter(r=>mostRecent(r,bl))*/
+
+    val patientHistoryList= spark.sparkContext.parallelize(Seq(
+      CassandraRow.fromMap(Map("puid" -> "p1", "element"->"e", "element_date" -> "2016-01-02 00:00:00.000","elementvalue"->2)),
+      CassandraRow.fromMap(Map("puid" -> "p4", "element"->null, "element_date" -> "2014-01-02 00:00:00.000","elementvalue"->10)),
+      CassandraRow.fromMap(Map("puid" -> "p5", "element"->"e1", "element_date" -> null,"elementvalue"->5)),
+      CassandraRow.fromMap(Map("puid" -> "p2", "element"->"e2", "element_date" -> "2014-06-02 00:00:00.000","elementvalue"->null))
+    ))
+
+    patientHistoryList.map(l=>
+    {
+      prints(l).mkString("|")
+    }).foreach(l=>println(l))
+
+
+
+  }
+
+  def prints(l:CassandraRow): Array[String] ={
+    /*val array=Array("","","","")*/
+    if(!l.isNullAt("puid")) array(0)= l.getString("puid") else array(0)="0"
+    if(!l.isNullAt("element")) array(1)= l.getString("element") else array(1)="0"
+    if(!l.isNullAt("element_date")) array(2)=l.getString("element_date") else array(2)="0"
+    if(!l.isNullAt("elementvalue")) array(3)=l.getString("elementvalue") else array(3)="0"
+
+    array
+  }
+
+
+  def mostRecent(visit:CassandraRow,patientHistory:Broadcast[List[CassandraRow]]): Boolean ={
+
+    patientHistory.value.foreach(r=>println("Cassandra1 : "+r))
+    val list=patientHistory.value.filter(r=>{
+    r.getString("puid").equalsIgnoreCase(visit.getString("puid")) &&
+      r.getString("element").equalsIgnoreCase("e") &&
+      r.getDateTime("element_date").isAfter(visit.getDateTime("e_date"))
+    })
+    list.foreach(r=>println("Result ::=====>"+r.getString("puid")+" "+r.getDouble("elementvalue")))
+    true
+  }
+}
