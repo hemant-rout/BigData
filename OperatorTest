@@ -1,0 +1,31 @@
+package com.data.spark
+
+/**
+  * Created by Hemant on 2/21/2019.
+  */
+
+object Operator{
+  val Union="Or"
+  val Intersection="And"
+}
+
+object PatterMatch {
+  def main(args: Array[String]): Unit = {
+   println(test(1,Operator.Union,"1","2","3"))
+    println(test(1,Operator.Union,"2","1","3"))
+    println(test(1,Operator.Union,"1","3","2"))
+    println(test(1,Operator.Intersection,"1","1","1"))
+    println(test(1,Operator.Intersection,"1","2","3"))
+    println(test(1,Operator.Intersection,"5","2","1"))
+  }
+
+
+  def test(id:Int,op:String,elements:String*): Boolean ={
+//elements.foreach(println)
+    val elementStatus=elements.map(ele=>ele.equalsIgnoreCase("1"))
+    op match {
+      case Operator.Union => elementStatus.contains(true)
+      case Operator.Intersection => !elementStatus.contains(false)
+    }
+  }
+}
