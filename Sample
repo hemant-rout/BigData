@@ -185,3 +185,10 @@ println(x.split("=")(0)+"\t")
 End2018-12-19T00:59:50.253+05:30
 Start2018-12-19T00:59:50.253+05:30
 End2018-12-19T01:01:39.969+05:30
+
+
+
+ val df=spark.read.option("multiLine","true").json("C:\\Users\\Hemant\\GitHub\\SparkProject\\input\\input.json")
+    //val fields=df.schema.fieldNames
+    //val rdd1:RDD[CassandraRow]=  df.map(r=>CassandraRow.fromMap((fields zip r.toSeq).toMap))
+df.printSchema()
