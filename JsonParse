@@ -1,0 +1,57 @@
+package com.scalapractice
+
+import com.datastax.spark.connector.CassandraRow
+import org.apache.spark.rdd.RDD
+import org.apache.spark.sql.{Column, SparkSession}
+import org.apache.spark.sql.types.StructType
+
+/**
+  * Created by Hemant on 2/28/2019.
+  */
+object JsonParsing {
+  def main(args: Array[String]): Unit = {
+    val spark = SparkSession.builder().appName("sparkTest").config("spark.tmp.warehouse","file:///tmp").master("local").getOrCreate()
+
+
+    def flattenSchema(schema: StructType, prefix: String = null) : Array[String] = {
+      schema.fields.flatMap(f => {
+        val colName:String = if (prefix == null) f.name else (prefix + "." + f.name)
+        f.dataType match {
+          case st: StructType =>
+            flattenSchema(st, colName)
+          case _ => Array(colName)
+        }
+      })
+    }
+
+   val df=spark.read.json("input/input.json")
+     df.createOrReplaceTempView("tbl")
+    //df.schema.fieldNames.foreach(println)
+   // df.printSchema()
+    val flt=flattenSchema(df.schema).filterNot(x=> x.endsWith("end"))
+    val str="select "+flt.map(ele=> {
+      if(ele.contains(".")){
+        val str=ele.replace(".", "_").replace("code_", "").replace("_start", "")
+        if(str.equalsIgnoreCase("fain"))
+          {
+            s"1 as $str, $ele as ${str}_date, $ele as encounter_date"
+          }
+        else{
+          s"1 as $str, $ele as ${str}_date"
+        }
+      }else ele
+    }
+    ).mkString(",")+" from tbl"
+    val df1=spark.sql(str)
+    val df2=spark.sql(str).select("a","a_date","b","b_date")
+    val hs=Array("element","element_date")
+    var sq:Seq[CassandraRow]=Seq()
+    df2.rdd.foreach(r=> {
+    sq= sq ++ r.toSeq.sliding(2, 2).map(x => CassandraRow.fromMap(hs zip x toMap))
+    })
+
+    spark.sparkContext.parallelize(sq).collect().foreach(println)
+
+    df1.show(false)
+  }
+}
