@@ -2,9 +2,9 @@ package com.scalapractice
 
 import com.datastax.spark.connector.CassandraRow
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.{Column, SparkSession}
+import org.apache.spark.sql.{Column, DataFrame, SparkSession}
 import org.apache.spark.sql.types.StructType
-
+import org.apache.spark.sql.functions._
 /**
   * Created by Hemant on 2/28/2019.
   */
@@ -24,13 +24,23 @@ object JsonParsing {
       })
     }
 
-   val df=spark.read.json("input/input.json")
-     df.createOrReplaceTempView("tbl")
-    //df.schema.fieldNames.foreach(println)
-   // df.printSchema()
-    val flt=flattenSchema(df.schema).filterNot(x=> x.endsWith("end"))
+   val df=spark.read.option("multiLine","true").json("input/input.json")
+    flattenSchema(df.schema).foreach(println)
+   val dfs:DataFrame= df.withColumn("a",explode(col("code.a"))).
+     withColumn("b",explode(col("code.b"))).drop("code")//.createOrReplaceTempView("tbl")
+    //dfs.schema.fieldNames.foreach(println)
+    //df.printSchema()
+  println("flattens===============")
+    val flt=flattenSchema(dfs.schema).filterNot(x=> x.endsWith("end"))
+    flt.foreach(println)
+  dfs.select(col("a.start").as("a_start"),col("b.start").as("b_start")).show(false)
+    //spark.sql("select explode(code.a) as a  from tbl").select("a.start","a.end").show(1,false)
+
+    System.exit(0)
     val str="select "+flt.map(ele=> {
       if(ele.contains(".")){
+        println(ele)
+
         val str=ele.replace(".", "_").replace("code_", "").replace("_start", "")
         if(str.equalsIgnoreCase("fain"))
           {
@@ -42,16 +52,21 @@ object JsonParsing {
       }else ele
     }
     ).mkString(",")+" from tbl"
+
+    println(str)
+    System.exit(0)
+
     val df1=spark.sql(str)
+    df1.show(false)
+    System.exit(0)
+
     val df2=spark.sql(str).select("a","a_date","b","b_date")
-    val hs=Array("element","element_date")
-    var sq:Seq[CassandraRow]=Seq()
-    df2.rdd.foreach(r=> {
-    sq= sq ++ r.toSeq.sliding(2, 2).map(x => CassandraRow.fromMap(hs zip x toMap))
+    val hs=Array("puid","element","element_date","elementvalue")
+
+    val rdds=df2.rdd.flatMap(r=> {
+    r.toSeq.sliding(2, 2).map(x => CassandraRow.fromMap(hs zip "999"+:x:+"0" toMap))
     })
 
-    spark.sparkContext.parallelize(sq).collect().foreach(println)
-
-    df1.show(false)
+    rdds.collect().foreach(println)
   }
 }
