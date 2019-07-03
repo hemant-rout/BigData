@@ -177,3 +177,7 @@ https://docs.datastax.com/en/developer/python-driver/3.18/getting_started/
 https://github.com/brianmhess/cassandra-loader
 https://www.geeksforgeeks.org/different-ways-to-iterate-over-rows-in-pandas-dataframe/
 https://www.youtube.com/watch?v=4bFgB1XTQXI
+https://www.linode.com/docs/quick-answers/linux/start-service-at-boot/
+https://unix.stackexchange.com/questions/236084/how-do-i-create-a-service-for-a-shell-script-so-i-can-start-and-stop-it-like-a-d
+
+https://www.digitalocean.com/community/tutorials/how-to-configure-a-linux-service-to-start-automatically-after-a-crash-or-reboot-part-2-reference
