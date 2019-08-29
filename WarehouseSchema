@@ -1,0 +1,33 @@
+val schema=StructType(Seq(StructField("f1",StringType,true),
+      StructField("f2",LongType,true),
+      StructField("f3",ShortType,true),
+      StructField("f4",IntegerType,true),
+      StructField("f5",DoubleType,true),
+      StructField("f6",FloatType,true),
+      StructField("f7",DateType,true),
+      StructField("f8",TimestampType,true),
+      StructField("f9",DecimalType(2,1),true)
+    )
+    )
+
+    val sourceTableName=""
+    val targetTableName = "a.b.c"
+    val hashField = "f1"
+    val prefix = s" CREATE TABLE $targetTableName\n(\n"
+    val schema=spark.sql(s"select * from $sourceTableName").schema
+    val distributionType  = "HASH"
+    val fields: String = schema.map(f => {
+      f match {
+        case StructField(_, StringType, _, _) => f.name + "  varchar(2000) "
+        case StructField(_, LongType, _, _) | StructField(_, IntegerType, _, _) | StructField(_, ShortType, _, _)| StructField(_, ByteType, _, _)
+        => f.name + "  int "
+        case StructField(_, FloatType, _, _) | StructField(_, DoubleType, _, _)| StructField(_, DecimalType(), _, _) => f.name + "  float "
+        case StructField(_, DateType, _, _) | StructField(_, TimestampType, _, _) => f.name + "  datetime"
+        case StructField(_, BooleanType, _, _)  => f.name + "  boolean"
+      }
+
+    }).mkString(", \n")
+
+    val distribution=if(distributionType == "HASH") s"HASH($hashField)" else distributionType
+    val postFix = s"\n)\nWITH ( DISTRIBUTION = $distribution , CLUSTERED COLUMNSTORARE INDEX);"
+    println(prefix + fields + postFix)
