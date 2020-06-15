@@ -1,0 +1,46 @@
+<html>
+<head>
+<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+<script>
+
+var customers = new Array();
+	customers.push(["Customer Id", "Name", "Country"]);
+	customers.push([1, "John Hammond", "United States"]);
+	customers.push([2, "Mudassar Khan", "India"]);
+	customers.push([3, "Suzanne Mathews", "France"]);
+	customers.push([4, "Robert Schidner", "Russia"]);
+
+$(document).ready(function() {
+$('div#tableWrapper').append('<table id="ajaxTable"></table>');
+var columnCount = customers[0].length;
+	
+	$('table#ajaxTable').append('<thead><tr></tr></thead>');
+
+	for (var i = 0; i < columnCount; i++) {
+	//$('table#ajaxTable > thead tr').append('<th>' + customers[0][i] + '</th>');
+	$('table#ajaxTable').children('thead').children('tr').append(`<input type="checkbox" id="${customers[0][i]}" class="ck" value="${customers[0][i]}"/><th>${customers[0][i]}</th>`);
+	//
+	}
+
+
+  for (var i = 1; i < customers.length; i++) {
+	$('table#ajaxTable').append('<tr></tr>');
+		for (var j = 0; j < columnCount; j++) {
+		//$('table#ajaxTable').children('tbody').children('tr').last().append('<td>' + customers[i][j] + '</td>');
+$('table#ajaxTable').children('tbody').children('tr').last().append(`<td>${customers[i][j]}</td>`);
+	   }
+	}
+	
+$(".ck").mouseover(function(){
+alert(this.id)
+});
+	
+});
+</script>
+</head>
+<body>
+<div id="tableWrapper">
+
+</div>
+</body>
+</html>
