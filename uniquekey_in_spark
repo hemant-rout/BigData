@@ -10,7 +10,8 @@ val df:DataFrame = spark.createDataFrame(Seq(
     )).toDF("id", "col1", "col2", "col3", "col4")
 
 
-    val windowSpec = Window.partitionBy().orderBy("id")
+    //val windowSpec = Window.partitionBy().orderBy("id")
+    val windowSpec = Window.orderBy("id")
     //df.printSchema(5)
 
     df.withColumn("row_number", row_number() over windowSpec).show()
