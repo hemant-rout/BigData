@@ -1,0 +1,16 @@
+val df:DataFrame = spark.createDataFrame(Seq(
+      (0, "a1",null, "c1", "d1"),
+      (1, "a2", "b2", "c2", "d2"),
+      (2, "a3", "b3", null, "d3"),
+      (3, "a4", "b6", "c4", "d4"),
+      (4, "a1", "b5", "c5", "d5"),
+      (5, "a3", "b5", "c5", "d5") ,
+      (5, "a10", "b10", "c10", "d10") ,
+      (50, "a50", "b50", "c50", "d50")
+    )).toDF("id", "col1", "col2", "col3", "col4")
+
+
+    val windowSpec = Window.partitionBy().orderBy("id")
+    //df.printSchema(5)
+
+    df.withColumn("row_number", row_number() over windowSpec).show()
