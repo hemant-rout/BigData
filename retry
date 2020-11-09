@@ -1,0 +1,19 @@
+#!/bin/bash
+
+
+Retries=0
+JobID=""
+while [ $Retries -lt 3 ]
+do
+              J_ID=`echo JOB100`
+              if [ $? -eq 0 ]
+              then
+                      JobID=$J_ID
+                      exit 0
+              else
+                             Retries=$( expr $Retries + 1 )
+                             sleep 240
+               fi
+done
+
+echo Hello $JobID
