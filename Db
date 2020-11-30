@@ -1,20 +1,25 @@
 import spark
 import java.util.Properties
 import azure.storage._
-import azure.storage.blob.blockblobservice import *
+import azure.storage.blob.blockblobservice._
 import spark.sql.functions import *
+import org.apache.spark.sql.{DataFrame, Dataset, SparkSession}
+import org.apache.spark.sql.functions._
+
 
 val storage_account_name =""
 val storage_account_key=""
-spark.conf.set(s"fs.azure.accout.key.$storage_account_name.blob.core.window.net","storage_account_key")
+spark.conf.set(s"fs.azure.accout.key.$storage_account_name.blob.core.window.net",storage_account_key)
 
 
-val landingContainerName=""
+//LandingZone to DatastoreZone 
+
+val landingContainerName="raw_zone"
 val storageAccountName=""
-val file_path="folder1/file_name.parquet"
+val file_path="data/landing_file.parquet"
 val file_format="parquet"
-val datastoreContainerName=""
-val datastore_file_path="folder1/file_name.parquet"
+val datastoreContainerName="datastore_zone"
+val datastore_file_path="data/datastore_file.parquet"
 val source_landing_zone=s"abfss://$landingContainerName@$storageAccountName.dfs.core.windows.net/$file_path"
 
 val target_datastore_zone = s"abfss://$datastoreContainerName@$storageAccountName.dfs.core.windows.net/$datastore_file_path"
@@ -39,14 +44,17 @@ writeData(data_frame,target_datastore_zone,"delta")
 
 
 -------------------------------------------------
+//LandingZone to DatastoreZone 
+
+------------------------------------------------
 
 val storage_account_name =""
 val storage_account_key=""
-spark.conf.set(s"fs.azure.accout.key.$storage_account_name.blob.core.window.net","storage_account_key")
+spark.conf.set(s"fs.azure.accout.key.$storage_account_name.blob.core.window.net",storage_account_key)
 
 Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver")
 
-def readFromSqlServer(jdbcHostname:string,database:string,tableName:string,jdbcPort=1433):DataFrame={
+def readFromSqlServer(jdbcHostname:String,database:String,tableName:String,jdbcPort=1433):DataFrame={
 val jdbcUrl = s"jdbc:sqlserver://${jdbcHostname}:${jdbcPort};database=${database}"
 val connectionProperties = new Properties()
 connectionProperties.put("user", s"${jdbcUsername}")
@@ -73,9 +81,9 @@ val file_path=""
 
 val landing_dataframe=readFromSqlServer(jdbcHostname,database,tableName)
 
-val landingContainerName=""
+val landingContainerName="raw_zone"
 val storageAccountName=""
-val file_path="folder1/file_name.parquet"
+val file_path="data/landing_file.parquet"
 val landing_file_format="parquet"
 val abs_file_path=s"abfss://$landingContainerName@$storageAccountName.dfs.core.windows.net/$file_path"
 
