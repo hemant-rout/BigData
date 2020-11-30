@@ -1,0 +1,82 @@
+import spark
+import java.util.Properties
+import azure.storage._
+import azure.storage.blob.blockblobservice import *
+import spark.sql.functions import *
+
+val storage_account_name =""
+val storage_account_key=""
+spark.conf.set(s"fs.azure.accout.key.$storage_account_name.blob.core.window.net","storage_account_key")
+
+
+val landingContainerName=""
+val storageAccountName=""
+val file_path="folder1/file_name.parquet"
+val file_format="parquet"
+val datastoreContainerName=""
+val datastore_file_path="folder1/file_name.parquet"
+val source_landing_zone=s"abfss://$landingContainerName@$storageAccountName.dfs.core.windows.net/$file_path"
+
+val target_datastore_zone = s"abfss://$datastoreContainerName@$storageAccountName.dfs.core.windows.net/$datastore_file_path"
+
+def readLandingData(file_path:String,file_format:String="parquet"):DataFrame={
+dataframe = spark.read.format(file_format).save(file_path)        
+return dataframe
+}
+
+data_frame = readLandingData(source_landing_zone,file_format)
+
+def writeData(dataframe:DataFrame,file_path:String,file_format:String="parquet"):Unit={
+try{
+dataframe.write.format(file_format).save(file_path)        
+}
+catch{
+    case e:Exception=> println(s"Exception has been occured while writing($file_format) format to $file_path")
+}
+}
+
+writeData(data_frame,target_datastore_zone,"delta")
+
+
+-------------------------------------------------
+
+val storage_account_name =""
+val storage_account_key=""
+spark.conf.set(s"fs.azure.accout.key.$storage_account_name.blob.core.window.net","storage_account_key")
+
+Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver")
+
+def readFromSqlServer(jdbcHostname:string,database:string,tableName:string,jdbcPort=1433):DataFrame={
+val jdbcUrl = s"jdbc:sqlserver://${jdbcHostname}:${jdbcPort};database=${database}"
+val connectionProperties = new Properties()
+connectionProperties.put("user", s"${jdbcUsername}")
+connectionProperties.put("password", s"${jdbcPassword}")
+val driverClass = "com.microsoft.sqlserver.jdbc.SQLServerDriver"
+connectionProperties.setProperty("Driver", driverClass)
+
+val dataframe = spark.read.jdbc(jdbcUrl, tableName, connectionProperties)
+return dataframe
+}
+
+def writeData(dataframe:DataFrame,file_path:String,file_format:String="parquet"):Unit={
+try{
+dataframe.write.format(file_format).save(file_path)        
+}
+catch{
+    case e:Exception=> println(s"Exception has been occured while writing($file_format) format to $file_path")
+}
+}
+
+val jdbcHostname=""
+val database=""
+val file_path=""
+
+val landing_dataframe=readFromSqlServer(jdbcHostname,database,tableName)
+
+val landingContainerName=""
+val storageAccountName=""
+val file_path="folder1/file_name.parquet"
+val landing_file_format="parquet"
+val abs_file_path=s"abfss://$landingContainerName@$storageAccountName.dfs.core.windows.net/$file_path"
+
+writeData(landing_dataframe,abs_file_path,landing_file_format)
