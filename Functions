@@ -139,3 +139,8 @@ https://alvinalexander.com/scala/how-find-difference-intersection-distinct-chara
     println(cond)
     df.where(cond).show()
 df.where(cond +" or "+"col4 in ('d3')").show()
+
+
+
+data = [(1,340.0,10),(1,None,34),(3,200.0,67),(4,np.NAN,86)]
+df = spark.createDataFrame(data).toDF(*["a","b","c"]).withColumn("ar",array("a","b","c")).withColumn("ar2",expr("filter(ar, x -> ((x IS NOT NULL) AND (!isNan(x))))"))
