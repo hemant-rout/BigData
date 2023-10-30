@@ -144,3 +144,68 @@ df.where(cond +" or "+"col4 in ('d3')").show()
 
 data = [(1,340.0,10),(1,None,34),(3,200.0,67),(4,np.NAN,86)]
 df = spark.createDataFrame(data).toDF(*["a","b","c"]).withColumn("ar",array("a","b","c")).withColumn("ar2",expr("filter(ar, x -> ((x IS NOT NULL) AND (!isNan(x))))"))
+
+
+---------------------------------------
+
+parsed_code = ast.parse(code)
+
+# Function to extract Spark SQL calls
+def extract_spark_sql_calls(node):
+    if isinstance(node, ast.Call):
+        if isinstance(node.func, ast.Attribute):
+            # Check if it's a method call on an object (e.g., spark.sql)
+            obj = node.func.value
+            method = node.func.attr
+            if isinstance(obj, ast.Name) and obj.id == "spark" and method == "sql":
+                # Spark SQL method call detected
+                sql_query = ast.dump(node.args[0])
+                print(f"Spark SQL Call: {sql_query}")
+
+# Traverse the AST and extract Spark SQL calls
+for node in ast.walk(parsed_code):
+    extract_spark_sql_calls(node)
+In this code, we traverse the AST and check if a function call is made on the spark object using the sql method. We then extract the SQL query from the function call using ast.dump(node.args[0]).
+
+When you run this code with the provided sample code, it will print the detected Spark SQL calls:
+
+sql
+Copy code
+Spark SQL Call: "SELECT * FROM my_table WHERE age > 30"
+Keep in mind that this is a basic example and may not cover all possible ways Spark SQL can be used in code. You may need to adapt and extend the code to cover more complex usage scenarios.
+
+
+
+
+
+parsed_code = ast.parse(code)
+
+# Function to extract Spark SQL calls
+def extract_spark_sql_calls(node):
+    if isinstance(node, ast.Call):
+        if isinstance(node.func, ast.Attribute):
+            # Check if it's a method call on an object (e.g., spark.sql)
+            obj = node.func.value
+            method = node.func.attr
+            if isinstance(obj, ast.Name) and obj.id == "spark" and method == "sql":
+                # Spark SQL method call detected
+                sql_query = ast.dump(node.args[0])
+                print(f"Spark SQL Call: {sql_query}")
+
+# Traverse the AST and extract Spark SQL calls
+for node in ast.walk(parsed_code):
+    extract_spark_sql_calls(node)
+In this code, we traverse the AST and check if a function call is made on the spark object using the sql method. We then extract the SQL query from the function call using ast.dump(node.args[0]).
+
+When you run this code with the provided sample code, it will print the detected Spark SQL calls:
+
+sql
+Copy code
+Spark SQL Call: "SELECT * FROM my_table WHERE age > 30"
+Keep in mind that this is a basic example and may not cover all possible ways Spark SQL can be used in code. You may need to adapt and extend the code to cover more complex usage scenarios.
+
+
+
+
+
+
