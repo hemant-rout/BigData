@@ -1,0 +1,44 @@
+
+import ast
+import astunparse
+
+def extract_content_under_if_condition(ast_tree, target_condition):
+    # parsed = ast.parse(code)
+    parsed=ast_tree
+    # Define a function to recursively search for the target if condition in the AST
+    def find_target_if_condition(node):
+        if isinstance(node, ast.If):
+            if (astunparse.unparse(node.test).strip("\n") == target_condition):
+                return node.body
+
+        for child_node in ast.iter_child_nodes(node):
+            result = find_target_if_condition(child_node)
+            if result:
+                return result
+
+    # Find and extract content under the target if condition
+    content = find_target_if_condition(parsed)
+    if content:
+        cont=ast.parse(astunparse.unparse(content))
+        if isinstance(cont,ast.stmt):
+            print("cond")
+            print(astunparse.unparse())
+        return astunparse.unparse(content)
+    else:
+        return "Target condition not found."
+
+# def get_code_under_if_condition(node, condition):
+#     for node in ast.walk(ast_tree):
+#         if isinstance(node, ast.If):
+#             print(astunparse.unparse(node))
+#         else:
+#             print(ast.dump(node))
+
+
+if __name__ == "__main__":
+    with open("sample_code.py", "r") as source:
+        ast_tree = ast.parse(source.read())
+    target_if_condition = "(x > 3)"
+
+    extracted_content = extract_content_under_if_condition(ast_tree, target_if_condition)
+    print(extracted_content)
