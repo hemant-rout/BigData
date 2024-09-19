@@ -1,0 +1,24 @@
+scala> spark.sql("select date_format('2024-09-16','u')").show()
++---------------------------------------------+
+|date_format(CAST(2024-09-16 AS TIMESTAMP), u)|
++---------------------------------------------+
+|                                            1|
++---------------------------------------------+
+
+
+scala> spark.sql("SELECT extract(DAYOFWEEK FROM DATE'2024-09-16')").show()
++----------------------------+
+|dayofweek(DATE '2024-09-16')|
++----------------------------+
+|                           2|
++----------------------------+
+
+
+scala> spark.sql("select dayofweek('2024-09-16')").show()
++-----------------------------------+
+|dayofweek(CAST(2024-09-16 AS DATE))|
++-----------------------------------+
+|                                  2|
++-----------------------------------+
+
+https://docs.databricks.com/en/sql/language-manual/functions/extract.html
