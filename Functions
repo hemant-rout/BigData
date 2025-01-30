@@ -205,6 +205,42 @@ Spark SQL Call: "SELECT * FROM my_table WHERE age > 30"
 Keep in mind that this is a basic example and may not cover all possible ways Spark SQL can be used in code. You may need to adapt and extend the code to cover more complex usage scenarios.
 
 
+from collections import defaultdict, deque
+
+def compute_ranks(child_parent):
+    # Step 1: Build parent-to-children mapping
+    parent_children = defaultdict(list)
+    all_nodes = set(child_parent.keys()) | set(child_parent.values())  # All unique nodes
+
+    for child, parent in child_parent.items():
+        parent_children[parent].append(child)
+
+    # Step 2: Find root nodes (nodes that are never children)
+    children = set(child_parent.keys())
+    roots = [node for node in all_nodes if node not in children]  # Nodes that are not children
+
+    # Step 3: BFS to compute ranks (incrementing with depth)
+    ranks = {node: 99 for node in all_nodes}  # Default all to 99 (assuming leaf nodes)
+    queue = deque([(root, 1) for root in roots])  # Start BFS with root nodes at rank 1
+
+    while queue:
+        node, rank = queue.popleft()
+        if node in parent_children:  # If node has children, assign rank and process children
+            ranks[node] = rank
+            for child in parent_children[node]:
+                queue.append((child, rank + 1))
+
+    return ranks
+
+# Given data (child → parent mapping)
+child_parent = {"B": "A", "C": "A", "D": "B", "E": "D"}
+
+# Compute ranks
+ranks = compute_ranks(child_parent)
+
+# Print results
+for node, rank in sorted(ranks.items()):
+    print(f"Node {node}: Rank {rank}")
 
 
 
