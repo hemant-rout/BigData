@@ -1,0 +1,134 @@
+import ast
+import sqlparse
+import os
+import re
+from collections import defaultdict
+
+def extract_strings_from_ast(node):
+    """Recursively extract all string literals from an AST node."""
+    strings = []
+    if isinstance(node, ast.Str):
+        strings.append(node.s)
+    elif isinstance(node, ast.Constant) and isinstance(node.value, str):
+        strings.append(node.value)
+    elif isinstance(node, ast.JoinedStr):  # f-strings
+        strings.extend(
+            extract_strings_from_ast(value) for value in node.values if isinstance(value, ast.Str)
+        )
+    elif isinstance(node, ast.BinOp) and isinstance(node.op, ast.Add):
+        strings.extend(extract_strings_from_ast(node.left))
+        strings.extend(extract_strings_from_ast(node.right))
+    elif isinstance(node, (ast.List, ast.Tuple)):
+        for element in node.elts:
+            strings.extend(extract_strings_from_ast(element))
+    elif isinstance(node, ast.Expr):
+        strings.extend(extract_strings_from_ast(node.value))
+    elif isinstance(node, ast.Call):
+        for arg in node.args:
+            strings.extend(extract_strings_from_ast(arg))
+    elif isinstance(node, ast.Assign):
+        strings.extend(extract_strings_from_ast(node.value))
+    return strings
+
+def extract_format_placeholders(query):
+    """Extract placeholders from a .format() SQL string."""
+    return re.findall(r'\{(\w+)\}', query)
+
+def is_sql_query(string):
+    """Check if a string looks like an SQL query."""
+    sql_keywords = ["SELECT", "INSERT", "UPDATE", "DELETE", "CREATE", "DROP", "ALTER", "JOIN", "WITH"]
+    return any(re.search(rf"\b{kw}\b", string, re.IGNORECASE) for kw in sql_keywords)
+
+def extract_ctes(query):
+    """Extract CTE (Common Table Expression) definitions from a SQL query."""
+    ctes = {}
+    match = re.search(r'WITH\s+(.*?)\s+SELECT', query, re.IGNORECASE | re.DOTALL)
+    if match:
+        cte_part = match.group(1)
+        cte_definitions = cte_part.split(',')
+        for cte in cte_definitions:
+            parts = cte.split(" AS ", 1)
+            if len(parts) == 2:
+                cte_name = parts[0].strip()
+                cte_query = parts[1].strip().strip('()')
+                ctes[cte_name] = cte_query
+    return ctes
+
+def extract_tables_and_joins(query):
+    """Extract table names and join key relationships from an SQL query, resolving CTEs."""
+    tables = set()
+    joins = defaultdict(set)
+    ctes = extract_ctes(query)
+    parsed = sqlparse.parse(query)
+    for stmt in parsed:
+        tokens = [token for token in stmt.tokens if not token.is_whitespace]
+        prev_token = None
+        for token in tokens:
+            if token.ttype is None and isinstance(token, sqlparse.sql.Identifier):
+                table_name = token.get_real_name()
+                if prev_token and prev_token.value.upper() in {"FROM", "JOIN", "INTO", "UPDATE", "TABLE"}:
+                    if table_name in ctes:
+                        subquery_tables, subquery_joins = extract_tables_and_joins(ctes[table_name])
+                        tables.update(subquery_tables)
+                        for key, value in subquery_joins.items():
+                            joins[key].update(value)
+                    else:
+                        tables.add(table_name)
+                if prev_token and prev_token.value.upper() == "ON":
+                    match = re.search(r"(\S+)\.(\S+)\s*=\s*(\S+)\.(\S+)", token.value, re.IGNORECASE)
+                    if match:
+                        joins[match.group(1)].add((match.group(2), match.group(3), match.group(4)))
+            prev_token = token
+    return tables, joins
+
+def parse_sql_queries_from_code(code):
+    """Extract SQL queries, tables, and join relationships from a given Python source code."""
+    queries_info = []
+    tree = ast.parse(code)
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute) and node.func.attr == "format":
+            if isinstance(node.func.value, ast.Str):
+                query_template = node.func.value.s
+                placeholders = extract_format_placeholders(query_template)
+                formatted_query = sqlparse.format(query_template, reindent=True, keyword_case='UPPER')
+                tables, joins = extract_tables_and_joins(formatted_query)
+                queries_info.append((formatted_query, tables, joins, placeholders))
+        else:
+            strings = extract_strings_from_ast(node)
+            for s in strings:
+                if is_sql_query(s):
+                    formatted_query = sqlparse.format(s, reindent=True, keyword_case='UPPER')
+                    tables, joins = extract_tables_and_joins(formatted_query)
+                    queries_info.append((formatted_query, tables, joins, []))
+    return queries_info
+
+def scan_python_file(file_path):
+    """Scan a Python file and extract SQL queries and their metadata."""
+    with open(file_path, "r", encoding="utf-8") as f:
+        code = f.read()
+    return parse_sql_queries_from_code(code)
+
+def scan_directory(directory):
+    """Scan all Python files in a directory for SQL queries and metadata."""
+    sql_queries = {}
+    for root, _, files in os.walk(directory):
+        for file in files:
+            if file.endswith(".py"):
+                file_path = os.path.join(root, file)
+                queries = scan_python_file(file_path)
+                if queries:
+                    sql_queries[file_path] = queries
+    return sql_queries
+
+if __name__ == "__main__":
+    directory_to_scan = "."  # Change this to the directory you want to scan
+    results = scan_directory(directory_to_scan)
+    for file, queries in results.items():
+        print(f"\nSQL Queries found in {file}:")
+        for query, tables, joins, placeholders in queries:
+            print(query)
+            print(f"Tables: {tables}")
+            print(f"Join Relations: {joins}")
+            if placeholders:
+                print(f"Placeholders: {placeholders}")
+            print("-" * 80)
